@@ -4,6 +4,9 @@ const express = require("express");
 const app = express();
 
 //Register view engine
+//ajs auto matically lookinto views folder if not u have to tell where to watch
+//app.set('views','myviews');
+// app.set("view engine", "ejs");
 
 //listen for requsets
 app.listen(4000);
