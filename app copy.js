@@ -1,32 +1,19 @@
 const express = require("express");
-const morgan = require("morgan");
 
 //express app
 const app = express();
 
 //Register view engine
+//ejs auto matically lookinto views folder if not u have to tell where to watch
+//app.set('views','myviews');
 app.set("view engine", "ejs");
 
 //listen for requsets
 app.listen(4000);
 
-// app.use((req, res, next) => {
-//   console.log("New request made");
-//   console.log("Host: ", req.hostname);
-//   console.log("Path: ", req.path);
-//   console.log("Method: ", req.method);
-//   next();
-// });
-
-app.use(express.static("public"));
-app.use(morgan("tiny"));
-
-// app.use((req, res, next) => {
-//   console.log("In the next middleware");
-//   next();
-// });
-
 app.get("/", (req, res) => {
+  // res.send("<p>Home page</p>");
+  // res.sendFile("./views/index.html", { root: __dirname });
   const blogs = [
     {
       title: "Yoshi finds eggs",
@@ -43,15 +30,18 @@ app.get("/", (req, res) => {
   ];
   res.render("index", { title: "Home", blogs: blogs });
 });
-
-// app.use((req, res, next) => {
-//   console.log("In the next middleware");
-//   next();
-// });
-
+// console.log({ __dirname });
+// console.log({ __filename });
 app.get("/about", (req, res) => {
+  // res.send('<p>About page</p>');
+  // res.sendFile("./views/about.html", { root: __dirname });
   res.render("about", { title: "About" });
 });
+
+//Redirects
+// app.get("/about-us", (req, res) => {
+//   res.redirect("/about");
+// });
 
 // New Blog post
 app.get("/blogs/create", (req, res) => {
@@ -60,5 +50,6 @@ app.get("/blogs/create", (req, res) => {
 
 //404 page
 app.use((req, res) => {
+  // res.status(404).sendFile("./views/404.html", { root: __dirname });
   res.status(404).render("404", { title: "404" });
 });
