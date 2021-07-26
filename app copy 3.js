@@ -1,9 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-
+const Blog = require('./models/blog');
 const { result } = require('lodash');
-const blogRoutes = require('./routes/blogRoutes');
 
 //express app
 const app = express();
@@ -86,7 +85,58 @@ app.get('/about', (req, res) => {
 });
 
 //blog routes
-app.use('/blogs', blogRoutes);
+app.get('/blogs', (req, res) => {
+  Blog.find()
+    .sort({ createdAt: -1 })
+    .then((result) => {
+      res.render('index', { title: 'All Blogs', blogs: result });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+//submit
+app.post('/blogs', (req, res) => {
+  const blog = new Blog(req.body);
+  blog
+    .save()
+    .then((result) => {
+      res.redirect('/blogs');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+// New Blog post
+app.get('/blogs/create', (req, res) => {
+  res.render('create', { title: 'Create a new Blog' });
+});
+
+//single blog Item
+app.get('/blogs/:id', (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  Blog.findById(id)
+    .then((result) => {
+      res.render('details', { blog: result, title: 'Blog Details' });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.delete('/blogs/:id', (req, res) => {
+  const id = req.params.id;
+  Blog.findByIdAndDelete(id)
+    .then((result) => {
+      res.json({ redirect: '/blogs' }); //when browser send a requset u cant do noraml re direct u have to send object
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 //404 page
 app.use((req, res) => {
